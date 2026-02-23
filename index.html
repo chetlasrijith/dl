@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Notes — Weeks</title>
+    <style>
+        body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px;background:#f7f7f8;color:#111}
+        h1{margin-bottom:8px}
+        .week{background:white;border:1px solid #e1e4e8;border-radius:8px;padding:16px;margin:14px 0;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+        .controls{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+        textarea.code{width:100%;min-height:160px;font-family:Consolas,monospace;font-size:13px;padding:12px;border:1px solid #ddd;border-radius:6px;resize:vertical}
+        button.copy{background:#0366d6;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+        button.copy:active{transform:translateY(1px)}
+        p.hint{margin:6px 0 12px;color:#444}
+        .row{display:flex;gap:12px}
+        .col{flex:1}
+    </style>
+</head>
+<body>
+    <h1>Weekly Code Areas</h1>
+    <p class="hint">Each section below provides a space to paste code. Click <strong>Copy</strong> to copy the whole block to clipboard.</p>
+
+    <div class="week" id="week-2">
+        <div class="controls">
+            <strong>Week 2</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week2code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week2code" class="code" placeholder="">import torch
+import torch.nn.functional as F
+
+class Activations:
+
+    @staticmethod
+    def sigmoid(x):
+        return 1 / (1 + torch.exp(-x))
+
+    @staticmethod
+    def tanh(x):
+        return torch.tanh(x)
+
+    @staticmethod
+    def relu(x):
+        return torch.maximum(torch.tensor(0.0), x)
+
+    @staticmethod
+    def leaky_relu(x, negative_slope=0.01):
+        return torch.where(x > 0, x, negative_slope * x)
+
+    @staticmethod
+    def parametric_relu(x, alpha=0.25):
+        return torch.where(x > 0, x, alpha * x)
+
+    @staticmethod
+    def elu(x, alpha=1.0):
+        return torch.where(x > 0, x, alpha * (torch.exp(x) - 1))
+
+    @staticmethod
+    def selu(x, lam=1.0507, alpha=1.67326):
+        return lam * torch.where(x > 0, x, alpha * (torch.exp(x) - 1))
+
+    @staticmethod
+    def softplus(x):
+        return torch.log(1 + torch.exp(x))
+
+    @staticmethod
+    def softsign(x):
+        return x / (1 + torch.abs(x))
+
+    @staticmethod
+    def swish(x):
+        return x * torch.sigmoid(x)
+
+    @staticmethod
+    def mish(x):
+        return x * torch.tanh(F.softplus(x))
+
+    @staticmethod
+    def softmax(x):
+        return F.softmax(x, dim=0)
+
+
+if __name__ == "__main__":
+    x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+
+    print("Sigmoid:", Activations.sigmoid(x))
+    print("Tanh:", Activations.tanh(x))
+    print("ReLU:", Activations.relu(x))
+    print("Leaky ReLU:", Activations.leaky_relu(x))
+    print("Parametric ReLU:", Activations.parametric_relu(x))
+    print("ELU:", Activations.elu(x))
+    print("SELU:", Activations.selu(x))
+    print("Softplus:", Activations.softplus(x))
+    print("Softsign:", Activations.softsign(x))
+    print("Swish:", Activations.swish(x))
+    print("Mish:", Activations.mish(x))
+    print("Softmax:", Activations.softmax(x))
+</textarea>
+    </div>
+
+    <div class="week" id="week-4">
+        <div class="controls">
+            <strong>Week 4</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week4code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week4code" class="code" placeholder="Paste your Week 4 code here...">import tensorflow as tf
+
+print("All Libraries Imported\n")
+
+X = [[1., 0.], [0., 1.], [1., 0.], [0., 1.]]
+Y = [[1.], [0.], [1.], [0.]]
+
+X_tf = tf.constant(X)
+Y_tf = tf.constant(Y)
+
+model_tf = tf.keras.Sequential([
+    tf.keras.layers.Dense(4, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+loss_fn_tf = tf.keras.losses.BinaryCrossentropy()
+optimizer_tf = tf.keras.optimizers.SGD(0.01)
+
+for epoch in range(1000):
+    with tf.GradientTape() as tape:
+        y_pred = model_tf(X_tf)
+        loss = loss_fn_tf(Y_tf, y_pred)
+
+    grads = tape.gradient(loss, model_tf.trainable_variables)
+    optimizer_tf.apply_gradients(zip(grads, model_tf.trainable_variables))
+
+    if epoch % 200 == 0:
+        print(f"Epoch {epoch} | Loss: {loss.numpy():.4f}")
+    </textarea>
+    </div>
+
+    <div class="week" id="week-5">
+        <div class="controls">
+            <strong>Week 5</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week5code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week5code" class="code" placeholder="Paste your Week 5 code here...">import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.datasets import mnist
+
+# Load Data
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# Normalize
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
+# Model
+model = Sequential([
+    Flatten(input_shape=(28, 28)),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
+])
+
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Train
+model.fit(x_train, y_train, epochs=5)
+
+# Evaluate
+loss, accuracy = model.evaluate(x_test, y_test)
+print("Test Accuracy:", accuracy)
+</textarea>
+    </div>
+
+    <div class="week" id="week-6">
+        <div class="controls">
+            <strong>Week 6</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week6code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week6code" class="code" placeholder="Paste your Week 6 code here...">!pip install ucimlrepo
+
+import numpy as np
+import pandas as pd
+from ucimlrepo import fetch_ucirepo
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense
+from tensorflow.keras.optimizers import Adam
+
+heart_disease = fetch_ucirepo(id=45)
+
+X = heart_disease.data.features
+y = heart_disease.data.targets
+
+y = y.iloc[:, 0]
+y = (y > 0).astype(int)
+
+print("Dataset loaded successfully")
+print(X.head())
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
+X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
+
+model = Sequential()
+model.add(Conv1D(32, 3, activation='relu', input_shape=(X_train.shape[1], 1)))
+model.add(MaxPooling1D(2))
+model.add(Flatten())
+model.add(Dense(32, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+model.compile(
+    optimizer=Adam(0.001),
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+print("Training started...")
+model.fit(X_train, y_train, epochs=20, batch_size=16)
+
+loss, accuracy = model.evaluate(X_test, y_test)
+print("Test Accuracy:", accuracy)
+</textarea>
+    </div>
+
+    <script>
+        async function copyCode(e){
+            const btn = e.currentTarget;
+            const id = btn.getAttribute('data-target');
+            const ta = document.getElementById(id);
+            if(!ta) return;
+            try{
+                await navigator.clipboard.writeText(ta.value);
+                const orig = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(()=> btn.textContent = orig,1200);
+            }catch(err){
+                ta.select();
+                document.execCommand('copy');
+                const orig = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(()=> btn.textContent = orig,1200);
+            }
+        }
+    </script>
+    
+</body>
+</html>
