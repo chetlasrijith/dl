@@ -21,6 +21,52 @@
     <h1>Weekly Code Areas</h1>
     <p class="hint">Each section below provides a space to paste code. Click <strong>Copy</strong> to copy the whole block to clipboard.</p>
 
+    <div class="week" id="week-1">
+        <div class="controls">
+            <strong>Week 1 - Create neural network class and initialize those weights and biases</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week1code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week1code" class="code" placeholder="Paste your Week 1 code here...">import numpy as np
+
+class NeuralNetwork:
+    def __init__(self, layer_sizes):
+        self.num_layers = len(layer_sizes)
+        self.layer_sizes = layer_sizes
+        self.weights = {}
+        self.biases = {}
+        self.initialize_parameters()
+
+    def initialize_parameters(self):
+        for i in range(1, self.num_layers):
+            self.weights[i] = np.random.randn(self.layer_sizes[i], self.layer_sizes[i-1]) * np.sqrt(2.0 / self.layer_sizes[i-1])
+            self.biases[i] = np.zeros((self.layer_sizes[i], 1))
+        print("Weights and biases initialized successfully")
+
+    def relu(self, x):
+        return np.maximum(0, x)
+
+    def softmax(self, x):
+        e_x = np.exp(x - np.max(x, axis=0, keepdims=True))
+        return e_x / np.sum(e_x, axis=0, keepdims=True)
+
+    def forward(self, x):
+        a = x
+        for i in range(1, self.num_layers - 1):
+            z = np.dot(self.weights[i], a) + self.biases[i]
+            a = self.relu(z)
+        z = np.dot(self.weights[self.num_layers - 1], a) + self.biases[self.num_layers - 1]
+        output = self.softmax(z)
+        return output
+
+nn = NeuralNetwork([4, 5, 3])
+x = np.random.randn(4, 1)
+output = nn.forward(x)
+
+print("Network Output:\n", output)
+</textarea>
+    </div>
+
     <div class="week" id="week-2">
         <div class="controls">
             <strong>Week 2 - Implement all activation functions in Neural Network</strong>
