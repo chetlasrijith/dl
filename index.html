@@ -23,7 +23,7 @@
 
     <div class="week" id="week-2">
         <div class="controls">
-            <strong>Week 2</strong>
+            <strong>Week 2 - Implement all activation functions in Neural Network</strong>
             <div style="flex:1"></div>
             <button class="copy" data-target="week2code" onclick="copyCode(event)">Copy</button>
         </div>
@@ -99,9 +99,71 @@ if __name__ == "__main__":
 </textarea>
     </div>
 
+    <div class="week" id="week-3">
+        <div class="controls">
+            <strong>Week 3 - Implement Loss function for Neural network</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week3code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week3code" class="code" placeholder="Paste your Week 3 code here...">import torch
+import torch.nn as nn
+import torch.optim as optim
+
+print("Loss Functions\n")
+
+y_true_reg = torch.tensor([3.0, 5.0, 2.5])
+y_pred_reg = torch.tensor([2.5, 5.5, 2.0])
+
+y_true_bin = torch.tensor([1.0, 0.0, 1.0])
+y_pred_bin = torch.tensor([0.9, 0.2, 0.8])
+
+y_true_multi = torch.tensor([0])
+y_pred_multi = torch.tensor([[2.0, 1.0, 0.1]])
+
+mse_loss = nn.MSELoss()
+mse = mse_loss(y_pred_reg, y_true_reg)
+print("MSE Loss:", mse.item())
+
+mae_loss = nn.L1Loss()
+mae = mae_loss(y_pred_reg, y_true_reg)
+print("MAE Loss:", mae.item())
+
+bce_loss = nn.BCELoss()
+bce = bce_loss(y_pred_bin, y_true_bin)
+print("Binary Cross Entropy Loss:", bce.item())
+
+cce_loss = nn.CrossEntropyLoss()
+cce = cce_loss(y_pred_multi, y_true_multi)
+print("Categorical Cross Entropy Loss:", cce.item())
+
+class CustomLoss(nn.Module):
+    def forward(self, y_pred, y_true):
+        return torch.mean((y_pred - y_true) ** 2)
+
+custom_loss = CustomLoss()
+custom = custom_loss(y_pred_reg, y_true_reg)
+print("Custom Loss:", custom.item())
+
+model = nn.Linear(1, 1)
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+criterion = nn.MSELoss()
+
+x = torch.tensor([[1.0], [2.0], [3.0]])
+y = torch.tensor([[2.0], [4.0], [6.0]])
+
+optimizer.zero_grad()
+output = model(x)
+train_loss = criterion(output, y)
+train_loss.backward()
+optimizer.step()
+
+print("Training Step Loss:", train_loss.item())
+</textarea>
+    </div>
+
     <div class="week" id="week-4">
         <div class="controls">
-            <strong>Week 4</strong>
+            <strong>Week 4 -  Implement Forward Propagation and Backward Propagation.</strong>
             <div style="flex:1"></div>
             <button class="copy" data-target="week4code" onclick="copyCode(event)">Copy</button>
         </div>
@@ -138,7 +200,7 @@ for epoch in range(1000):
 
     <div class="week" id="week-5">
         <div class="controls">
-            <strong>Week 5</strong>
+            <strong>Week 5 - Program to Train and Test a neural network.</strong>
             <div style="flex:1"></div>
             <button class="copy" data-target="week5code" onclick="copyCode(event)">Copy</button>
         </div>
@@ -178,7 +240,8 @@ print("Test Accuracy:", accuracy)
 
     <div class="week" id="week-6">
         <div class="controls">
-            <strong>Week 6</strong>
+            <strong>Week 6 - Train and test the Convolution neural network using the heart disease dataset, preprocess
+it.</strong>
             <div style="flex:1"></div>
             <button class="copy" data-target="week6code" onclick="copyCode(event)">Copy</button>
         </div>
@@ -211,6 +274,305 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 model.fit(X_train, y_train, epochs=20, batch_size=16)
 loss, acc = model.evaluate(X_test, y_test)
 print("Accuracy:", acc)
+</textarea>
+    </div>
+
+    <div class="week" id="week-7">
+        <div class="controls">
+            <strong>Week 7 - Implement Convolution neural network for image classification.</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week7code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week7code" class="code" placeholder="Paste your Week 7 code here...">import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+import matplotlib.pyplot as plt
+import numpy as np
+
+print("TensorFlow Version:", tf.__version__)
+
+(X_train, y_train), (X_test, y_test) = datasets.cifar10.load_data()
+
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+print("Training data shape:", X_train.shape)
+print("Test data shape:", X_test.shape)
+
+class_names = [
+    'airplane','automobile','bird','cat','deer',
+    'dog','frog','horse','ship','truck'
+]
+
+plt.figure(figsize=(8,8))
+for i in range(9):
+    plt.subplot(3,3,i+1)
+    plt.imshow(X_train[i])
+    plt.title(class_names[y_train[i][0]])
+    plt.axis('off')
+plt.show()
+
+model = models.Sequential([
+    layers.Conv2D(32, (3,3), activation='relu', input_shape=(32,32,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64, (3,3), activation='relu'),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64, (3,3), activation='relu'),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+
+model.summary()
+
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    X_train, y_train,
+    epochs=10,
+    validation_data=(X_test, y_test)
+)
+
+test_loss, test_acc = model.evaluate(X_test, y_test, verbose=2)
+print("\nTest Accuracy:", test_acc)
+
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+
+predictions = model.predict(X_test[:5])
+
+for i in range(5):
+    plt.imshow(X_test[i])
+    plt.title("Predicted: " + class_names[np.argmax(predictions[i])])
+    plt.axis('off')
+    plt.show()
+</textarea>
+    </div>
+
+    <div class="week" id="week-8">
+        <div class="controls">
+            <strong>Week 8 - Train and test the recurrent neural network using the heart disease dataset, pre-process
+it.</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week8code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week8code" class="code" placeholder="Paste your Week 8 code here...">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import SimpleRNN, Dense, Dropout
+
+print("TensorFlow Version:", tf.__version__)
+
+!wget https://archive.ics.uci.edu/ml/machine-learning-databases/heartdisease/processed.cleveland.data -O heart.csv
+
+column_names = [
+    'age','sex','cp','trestbps','chol','fbs','restecg',
+    'thalach','exang','oldpeak','slope','ca','thal','target'
+]
+
+data = pd.read_csv("heart.csv", names=column_names)
+
+print("Dataset Shape:", data.shape)
+print(data.head())
+
+data.replace('?', np.nan, inplace=True)
+data.dropna(inplace=True)
+data = data.astype(float)
+
+data['target'] = (data['target'] > 0).astype(int)
+
+X = data.drop("target", axis=1)
+y = data["target"]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
+
+print("Train Shape:", X_train.shape)
+print("Test Shape:", X_test.shape)
+
+X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
+X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
+
+model = Sequential()
+model.add(SimpleRNN(32, activation='relu', input_shape=(X_train.shape[1], 1)))
+model.add(Dropout(0.2))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+model.summary()
+
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    X_train,
+    y_train,
+    epochs=50,
+    batch_size=16,
+    validation_split=0.2
+)
+
+y_pred = model.predict(X_test)
+y_pred = (y_pred > 0.5).astype(int).flatten()
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix")
+print(confusion_matrix(y_test, y_pred))
+print("\nClassification Report")
+print(classification_report(y_test, y_pred))
+
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title("Model Accuracy")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.legend(["Train", "Validation"])
+plt.show()
+</textarea>
+    </div>
+
+    <div class="week" id="week-9">
+        <div class="controls">
+            <strong>Week 9 - Implement Facial recognition using neural network</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week9code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week9code" class="code" placeholder="Paste your Week 9 code here...">import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten, Dropout
+from sklearn.metrics import classification_report, confusion_matrix
+
+print("TensorFlow Version:", tf.__version__)
+
+(X_train, y_train), (X_test, y_test) = cifar10.load_data()
+
+print("Training shape:", X_train.shape)
+print("Testing shape:", X_test.shape)
+
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+y_train = y_train.flatten()
+y_test = y_test.flatten()
+
+model = Sequential()
+model.add(Flatten(input_shape=(32,32,3)))
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(256, activation='relu'))
+model.add(Dense(10, activation='softmax'))
+
+model.summary()
+
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    X_train,
+    y_train,
+    epochs=10,
+    batch_size=64,
+    validation_split=0.2
+)
+
+y_pred = model.predict(X_test)
+y_pred = np.argmax(y_pred, axis=1)
+
+print("\nConfusion Matrix")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report")
+print(classification_report(y_test, y_pred))
+
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title("Model Accuracy")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.legend(["Train","Validation"])
+plt.show()
+
+plt.imshow(X_test[0])
+plt.title("Actual Label: " + str(y_test[0]))
+plt.show()
+
+prediction = model.predict(X_test[0].reshape(1,32,32,3))
+print("Predicted Label:", np.argmax(prediction))
+</textarea>
+    </div>
+
+    <div class="week" id="week-10">
+        <div class="controls">
+            <strong>Week 10 - WriteImplement Object detection using neural network</strong>
+            <div style="flex:1"></div>
+            <button class="copy" data-target="week10code" onclick="copyCode(event)">Copy</button>
+        </div>
+        <textarea id="week10code" class="code" placeholder="Paste your Week 10 code here...">!pip install ultralytics opencv-python matplotlib requests
+
+import torch
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
+
+print("PyTorch Version:", torch.__version__)
+
+model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+
+url = "https://ultralytics.com/images/zidane.jpg"
+resp = requests.get(url)
+
+img_array = np.asarray(bytearray(resp.content), dtype=np.uint8)
+img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+
+results = model(img)
+
+print(results.pandas().xyxy[0])
+
+detections = results.xyxy[0]
+
+for *box, conf, cls in detections:
+    x1, y1, x2, y2 = map(int, box)
+    label = model.names[int(cls)]
+
+    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    cv2.putText(img, label, (x1, y1 - 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+
+plt.figure(figsize=(8, 6))
+plt.imshow(img)
+plt.axis("off")
+plt.show()
 </textarea>
     </div>
 
